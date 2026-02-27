@@ -1,0 +1,135 @@
+<html>
+    <head>
+        <title>
+            Clinic Management
+        </title>
+        <style>
+            nav{
+                background-color: black;
+                padding: 10px;
+            }
+            nav ul li{
+                display:inline;
+                margin-right: 20px;
+            }
+            nav ul li a{
+                color:white;
+                text-decoration-style: none;
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <ul> 
+                <li><a href="Home.html">Home</a></li>
+                <li><a href="doctors.html">Doctors</a></li>
+                <li><a href="Appointments.html">Appointments</a></li>
+                <li><a href="About.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </body>
+    <head>
+    <title>Appointments Page</title>
+</head>
+
+<body>
+
+<h2>Book Appointment</h2>
+
+<form onsubmit="saveAppointment(); return false;">
+    Patient Name:<br>
+    <input type="text" id="patientName" value="John Doe"><br><br>
+
+    Select Doctor:<br>
+    <select id="doctor">
+        <option value="">Select</option>
+        <option>Dr. Ram</option>
+        <option>Dr. Sita</option>
+    </select><br><br>
+
+    Select Date:<br>
+    <input type="date" id="date"><br><br>
+
+    Select Time:<br>
+    <input type="time" id="time"><br><br>
+
+    Reason / Notes:<br>
+    <textarea id="reason"></textarea><br><br>
+
+    <input type="submit" value="Book Appointment">
+</form>
+
+<hr>
+
+<h2>Booked Appointments</h2>
+
+<table border="1">
+    <tr>
+        <th>Patient</th>
+        <th>Doctor</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Reason</th>
+        <th>Action</th>
+    </tr>
+    <tbody id="appointmentTable"></tbody>
+</table>
+
+<script>
+    let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+
+    function saveAppointment() {
+        let patient = document.getElementById("patientName").value;
+        let doctor = document.getElementById("doctor").value;
+        let date = document.getElementById("date").value;
+        let time = document.getElementById("time").value;
+        let reason = document.getElementById("reason").value;
+
+        if (doctor === "" || date === "" || time === "") {
+            alert("Please fill all fields");
+            return;
+        }
+
+        let appointment = {
+            patient,
+            doctor,
+            date,
+            time,
+            reason
+        };
+
+        appointments.push(appointment);
+        localStorage.setItem("appointments", JSON.stringify(appointments));
+        displayAppointments();
+    }
+
+    function displayAppointments() {
+        let table = document.getElementById("appointmentTable");
+        table.innerHTML = "";
+
+        appointments.forEach((app, index) => {
+            let row = table.insertRow();
+
+            row.insertCell(0).innerHTML = app.patient;
+            row.insertCell(1).innerHTML = app.doctor;
+            row.insertCell(2).innerHTML = app.date;
+            row.insertCell(3).innerHTML = app.time;
+            row.insertCell(4).innerHTML = app.reason;
+            row.insertCell(5).innerHTML =
+                `<button onclick="cancelAppointment(${index})">Cancel</button>`;
+        });
+    }
+
+    function cancelAppointment(index) {
+        appointments.splice(index, 1);
+        localStorage.setItem("appointments", JSON.stringify(appointments));
+        displayAppointments();
+    }
+
+    displayAppointments();
+</script>
+
+</body>
+</html>
